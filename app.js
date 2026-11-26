@@ -109,6 +109,7 @@
   }
 
   function isDayUnlocked(dayNum) {
+    if (window.__ADMIN_UNLOCKED__) return true;
     const now = getPeruNowParts();
     const targetYear = getTargetYear(now.year);
 
@@ -185,7 +186,7 @@
       hour: '2-digit',
       minute: '2-digit'
     }).format(new Date());
-    peruDateEl.textContent = `Perú · ${formattedNow}`;
+    peruDateEl.textContent = formattedNow;
   }
 
   /* ------------------------------------------------------------------------
@@ -624,26 +625,38 @@
 
       if (dayNum === 25) {
         lockedMessage.textContent = 'Un poquito de paciencia, mi amor... este regalo extra es exclusivo para la mañana de Navidad ♡';
-        lockedDatePill.textContent = 'Se desbloquea el 25 de diciembre (hora de Perú)';
+        lockedDatePill.textContent = 'Se desbloquea el 25 de diciembre';
       } else {
         lockedMessage.textContent = 'Un poquito de paciencia, mi amor... todavía no llega el momento de abrir este regalo ♡';
-        lockedDatePill.textContent = `Disponible a partir del ${dayNum} de diciembre (hora de Perú)`;
+        lockedDatePill.textContent = `Disponible a partir del ${dayNum} de diciembre`;
       }
       lockedDialog.showModal();
       return;
     }
 
-    const surprise = window.ADVENT_SURPRISES && window.ADVENT_SURPRISES[dayNum];
-    if (!surprise) return;
+    const baseSurprise = window.ADVENT_SURPRISES && window.ADVENT_SURPRISES[dayNum];
+    if (!baseSurprise) return;
 
-    const alreadyOpened = getOpenedDays().includes(dayNum);
-    if (!alreadyOpened) {
-      markDayOpened(dayNum);
-      renderCalendarGrid();
-      const updatedTrigger = dayNum === 25
-        ? document.querySelector('.bonus-25-btn')
-        : document.querySelector(`.gift-tile[data-day="${dayNum}"]`);
-      if (updatedTrigger) updatedTrigger.classList.add('unlock-burst');
+    const edits = typeof window.getAdventEdits === 'function' ? window.getAdventEdits() : {};
+    const customEdit = edits[dayNum];
+    const surprise = customEdit
+      ? Object.assign({}, baseSurprise, {
+          title: customEdit.title || baseSurprise.title,
+          _customMsg: customEdit.msg || '',
+          _customEmoji: customEdit.emoji || ''
+        })
+      : baseSurprise;
+
+    if (!window.__ADMIN_UNLOCKED__) {
+      const alreadyOpened = getOpenedDays().includes(dayNum);
+      if (!alreadyOpened) {
+        markDayOpened(dayNum);
+        renderCalendarGrid();
+        const updatedTrigger = dayNum === 25
+          ? document.querySelector('.bonus-25-btn')
+          : document.querySelector(`.gift-tile[data-day="${dayNum}"]`);
+        if (updatedTrigger) updatedTrigger.classList.add('unlock-burst');
+      }
     }
 
     openSurpriseModal(surprise);
@@ -681,11 +694,25 @@
     if (surprise.day === 25) shell.classList.add('is-bonus-25');
 
     dayBadge.textContent = surprise.day === 25 ? '25 de Diciembre' : `Día ${surprise.day} de Diciembre`;
-    typePill.textContent = surprise.typeLabel || 'Sorpresa';
+    typePill.textContent = (surprise._customEmoji ? `${surprise._customEmoji} ` : '') + (surprise.typeLabel || 'Sorpresa');
     titleEl.textContent = surprise.title;
     bodyEl.innerHTML = '';
 
-    renderSurpriseContent(surprise, bodyEl);
+    if (surprise._customMsg) {
+      const safeParagraphs = surprise._customMsg
+        .split(/\n+/)
+        .filter((line) => line.trim().length > 0)
+        .map((line) => `<p>${escapeHtml(line)}</p>`)
+        .join('');
+      bodyEl.innerHTML = `
+        <article class="parchment-letter">
+          ${surprise._customEmoji ? `<div style="font-size:2rem;text-align:center;margin-bottom:10px;">${escapeHtml(surprise._customEmoji)}</div>` : ''}
+          ${safeParagraphs}
+        </article>
+      `;
+    } else {
+      renderSurpriseContent(surprise, bodyEl);
+    }
     triggerGoldenBurst(burstEl, surprise.day >= 24 ? 28 : 16);
 
     dialog.showModal();
@@ -1609,6 +1636,7 @@
      10. INICIALIZACIÓN PRINCIPAL (RENDER INMEDIATO + UPGRADE TEMPORAL)
      ------------------------------------------------------------------------ */
   function init() {
+    window.refreshAdventGrid = renderCalendarGrid;
     populateBackdropLights();
     setupDialogBehaviors();
     updateCountdownUI();

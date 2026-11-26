@@ -128,7 +128,7 @@
     #adminBarLock:hover { background: rgba(255,255,255,0.14); }
 
     /* --- Botón editar en cada tarjeta (solo modo admin) --- */
-    .gift-card { position: relative; }
+    .gift-tile { position: relative; }
     .edit-gift-btn {
       position: absolute;
       top: 6px;
@@ -146,9 +146,11 @@
       font-family: 'Quicksand', sans-serif;
       box-shadow: 0 1px 6px rgba(0,0,0,0.3);
       transition: background 0.2s;
+      pointer-events: auto;
     }
     .edit-gift-btn:hover { background: #f5c14a; }
-    body.admin-mode .edit-gift-btn { display: block; }
+    body.admin-mode .gift-tile .edit-gift-btn,
+    body.admin-mode .bonus-25-btn .edit-gift-btn { display: block; }
 
     /* --- Modal de edición de regalo --- */
     #editGiftOverlay {
@@ -282,43 +284,82 @@
 
   function lockAdminMode() {
     adminUnlocked = false;
+    window.__ADMIN_UNLOCKED__ = false;
     lockBtn.textContent = '🔒';
     lockBtn.classList.remove('unlocked');
     lockBtn.setAttribute('aria-label', 'Acceso de edición');
     document.body.classList.remove('admin-mode');
     adminBar.classList.add('hidden');
+    if (typeof window.refreshAdventGrid === 'function') {
+      window.refreshAdventGrid();
+    }
   }
 
   /* ---- Activar modo admin ---- */
   function activateAdminMode() {
+    adminUnlocked = true;
+    window.__ADMIN_UNLOCKED__ = true;
     lockBtn.textContent = '🔓';
     lockBtn.classList.add('unlocked');
     lockBtn.setAttribute('aria-label', 'Cerrar modo edición');
     document.body.classList.add('admin-mode');
     adminBar.classList.remove('hidden');
+    if (typeof window.refreshAdventGrid === 'function') {
+      window.refreshAdventGrid();
+    }
     injectEditButtons();
+    // Re-inyectar cuando renderCalendarGrid() recrea los elementos
+    const grid = document.getElementById('giftsGrid');
+    if (grid && !grid._adminObserver) {
+      grid._adminObserver = new MutationObserver(() => {
+        if (adminUnlocked) injectEditButtons();
+      });
+      grid._adminObserver.observe(grid, { childList: true });
+    }
+    const bonusWrap = document.getElementById('bonus25Wrap');
+    if (bonusWrap && !bonusWrap._adminObserver) {
+      bonusWrap._adminObserver = new MutationObserver(() => {
+        if (adminUnlocked) injectEditButtons();
+      });
+      bonusWrap._adminObserver.observe(bonusWrap, { childList: true });
+    }
   }
 
   /* ---- Inyectar botones de edición en cada tarjeta ---- */
+  function createEditTrigger(dayNum) {
+    const btn = document.createElement('span');
+    btn.className = 'edit-gift-btn';
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('tabindex', '0');
+    btn.setAttribute('aria-label', `Editar regalo ${dayNum}`);
+    btn.textContent = '✏️';
+    const triggerEdit = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      openEditModal(Number(dayNum));
+    };
+    btn.addEventListener('click', triggerEdit);
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') triggerEdit(e);
+    });
+    return btn;
+  }
+
   function injectEditButtons() {
     const grid = document.getElementById('giftsGrid');
-    if (!grid) return;
-    const cards = grid.querySelectorAll('.gift-card');
-    cards.forEach((card) => {
-      // Evitar duplicados
-      if (card.querySelector('.edit-gift-btn')) return;
-      const dayAttr = card.getAttribute('data-day') || card.dataset.day;
-      if (!dayAttr) return;
-      const btn = document.createElement('button');
-      btn.className = 'edit-gift-btn';
-      btn.setAttribute('aria-label', `Editar regalo ${dayAttr}`);
-      btn.textContent = '✏️';
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openEditModal(Number(dayAttr));
+    if (grid) {
+      grid.querySelectorAll('.gift-tile').forEach((card) => {
+        if (card.querySelector('.edit-gift-btn')) return;
+        const dayAttr = card.dataset.day;
+        if (!dayAttr) return;
+        card.appendChild(createEditTrigger(dayAttr));
       });
-      card.appendChild(btn);
-    });
+    }
+    const bonusBtn = document.querySelector('.bonus-25-btn');
+    if (bonusBtn && !bonusBtn.querySelector('.edit-gift-btn')) {
+      bonusBtn.style.position = 'relative';
+      bonusBtn.appendChild(createEditTrigger(25));
+    }
   }
 
   /* ---- Modal edición ---- */
@@ -326,8 +367,9 @@
     currentEditDay = day;
     const edits = readEdits();
     const saved = edits[day] || {};
+    const orig = (window.ADVENT_SURPRISES && window.ADVENT_SURPRISES[day]) || {};
     document.getElementById('editGiftDayLabel').textContent = `#${day}`;
-    document.getElementById('editTitleInput').value  = saved.title  || '';
+    document.getElementById('editTitleInput').value  = saved.title || orig.title || '';
     document.getElementById('editMsgInput').value    = saved.msg    || '';
     document.getElementById('editEmojiInput').value  = saved.emoji  || '';
     editOverlay.classList.remove('hidden');
