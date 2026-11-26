@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>24 días para Navidad, 24 sorpresas para ti ♡ — Arii</title>
+  <meta name="description" content="Calendario de Adviento romántico y mágico en el bosque navideño, creado especialmente para Arii.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Great+Vibes&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Great+Vibes&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  </noscript>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient Snow & Sparkles Layer -->
+  <canvas id="snowCanvas" class="snow-canvas" aria-hidden="true"></canvas>
+
+  <!-- Subtle Accessibility / Ambient Controls (Music Box & Motion Toggle) -->
+  <div class="ambient-controls" role="region" aria-label="Controles de ambiente">
+    <button type="button" id="toggleMotionBtn" class="ambient-btn" aria-label="Pausar animaciones de nieve y luces">
+      <span class="ambient-btn-icon" aria-hidden="true">❄️</span>
+      <span class="ambient-btn-text">Pausar magia</span>
+    </button>
+    <button type="button" id="toggleMusicBtn" class="ambient-btn" aria-pressed="false" aria-label="Reproducir melodía navideña suave">
+      <span class="ambient-btn-icon" aria-hidden="true">🎵</span>
+      <span class="ambient-btn-text">Melodía</span>
+    </button>
+  </div>
+
+  <!-- Main Enchanted Christmas Forest Scene -->
+  <main class="forest-scene" id="forestScene">
+    <!-- Sky, Moon, Distant Snowy Forest & Floating Glows -->
+    <div class="sky-backdrop" aria-hidden="true">
+      <div class="aurora-glow"></div>
+      <div class="stars-layer" id="starsLayer"></div>
+
+      <!-- Full Moon Upper Right -->
+      <div class="moon-wrap">
+        <div class="moon-halo"></div>
+        <div class="moon-disc">
+          <span class="crater c1"></span>
+          <span class="crater c2"></span>
+          <span class="crater c3"></span>
+        </div>
+      </div>
+
+      <!-- Distant Snowy Pine Silhouettes -->
+      <svg class="distant-forest" viewBox="0 0 1600 420" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="hillFar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0b1a22"/>
+            <stop offset="100%" stop-color="#071316"/>
+          </linearGradient>
+          <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0a201b"/>
+            <stop offset="100%" stop-color="#05130f"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,260 Q280,190 560,245 T1120,235 T1600,255 L1600,420 L0,420 Z" fill="url(#hillFar)"/>
+        <!-- Distant Pines Left-Center & Right-Center -->
+        <g fill="#0c231c" opacity="0.9">
+          <polygon points="315,240 340,145 365,240"/>
+          <polygon points="322,200 340,125 358,200"/>
+          <polygon points="370,250 390,175 410,250"/>
+          <polygon points="1180,255 1205,155 1230,255"/>
+          <polygon points="1186,210 1205,135 1224,210"/>
+          <polygon points="1245,260 1265,180 1285,260"/>
+          <polygon points="1290,265 1312,175 1334,265"/>
+        </g>
+        <!-- Snow caps on distant pines -->
+        <g fill="#dbe9f4" opacity="0.38">
+          <polygon points="340,125 331,150 349,150"/>
+          <polygon points="1205,135 1196,162 1214,162"/>
+          <polygon points="1312,175 1304,196 1320,196"/>
+        </g>
+        <path d="M0,335 Q400,285 800,320 T1600,325 L1600,420 L0,420 Z" fill="url(#hillMid)"/>
+      </svg>
+
+      <!-- Top Hanging String Lights (Festoon Bulbs) -->
+      <svg class="top-string-lights" viewBox="0 0 1600 180" preserveAspectRatio="none">
+        <path d="M-20,18 Q210,125 460,42" fill="none" stroke="#221912" stroke-width="3"/>
+        <path d="M1140,36 Q1375,115 1620,25" fill="none" stroke="#221912" stroke-width="3"/>
+        <path d="M0,8 Q160,65 360,12" fill="none" stroke="#2a1f16" stroke-width="2"/>
+        <path d="M1230,10 Q1420,72 1610,12" fill="none" stroke="#2a1f16" stroke-width="2"/>
+      </svg>
+      <div class="festoon-bulbs-left" id="festoonLeft"></div>
+      <div class="festoon-bulbs-right" id="festoonRight"></div>
+    </div>
+
+    <!-- Top Pine Garland & Main Wooden Title Plaque -->
+    <header class="top-banner-area">
+      <!-- Left & Right Draped Pine Boughs -->
+      <svg class="top-garland garland-left" viewBox="0 0 360 120" aria-hidden="true">
+        <path d="M-10,15 Q120,65 320,25" fill="none" stroke="#10361d" stroke-width="26" stroke-linecap="round"/>
+        <path d="M-10,12 Q125,58 310,20" fill="none" stroke="#1d5730" stroke-width="14" stroke-linecap="round" stroke-dasharray="10 8"/>
+        <path d="M18,22 Q85,48 165,38 Q125,52 55,44 Z" fill="#eef5fc" opacity="0.82"/>
+        <circle cx="65" cy="46" r="8" fill="#c11d27"/><circle cx="155" cy="50" r="7" fill="#dfb04b"/>
+        <circle cx="235" cy="39" r="8" fill="#c11d27"/><circle cx="110" cy="48" r="4.5" fill="#ffe79e"/>
+        <circle cx="200" cy="44" r="4.5" fill="#ffe79e"/><circle cx="285" cy="28" r="4.5" fill="#ffe79e"/>
+      </svg>
+      <svg class="top-garland garland-right" viewBox="0 0 360 120" aria-hidden="true">
+        <path d="M370,15 Q240,65 40,25" fill="none" stroke="#10361d" stroke-width="26" stroke-linecap="round"/>
+        <path d="M370,12 Q235,58 50,20" fill="none" stroke="#1d5730" stroke-width="14" stroke-linecap="round" stroke-dasharray="10 8"/>
+        <path d="M342,22 Q275,48 195,38 Q235,52 305,44 Z" fill="#eef5fc" opacity="0.82"/>
+        <circle cx="295" cy="46" r="8" fill="#c11d27"/><circle cx="205" cy="50" r="7" fill="#dfb04b"/>
+        <circle cx="125" cy="39" r="8" fill="#c11d27"/><circle cx="250" cy="48" r="4.5" fill="#ffe79e"/>
+        <circle cx="160" cy="44" r="4.5" fill="#ffe79e"/><circle cx="75" cy="28" r="4.5" fill="#ffe79e"/>
+      </svg>
+
+      <div class="title-plaque">
+        <!-- Decorative Crown: Snow-dusted Pine Boughs, Holly & Crimson Velvet Bow -->
+        <div class="plaque-crown" aria-hidden="true">
+          <svg class="plaque-crown-svg" viewBox="0 0 760 120" preserveAspectRatio="xMidYMax meet">
+            <defs>
+              <radialGradient id="bowRed" cx="35%" cy="35%" r="70%">
+                <stop offset="0%" stop-color="#d6323a"/>
+                <stop offset="55%" stop-color="#8f111a"/>
+                <stop offset="100%" stop-color="#53070d"/>
+              </radialGradient>
+              <linearGradient id="pineDark" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1f5331"/>
+                <stop offset="100%" stop-color="#0b2817"/>
+              </linearGradient>
+            </defs>
+            <!-- Pine Branch Clusters -->
+            <g fill="url(#pineDark)">
+              <ellipse cx="180" cy="86" rx="115" ry="26" transform="rotate(-10 180 86)"/>
+              <ellipse cx="265" cy="68" rx="95" ry="24" transform="rotate(-6 265 68)"/>
+              <ellipse cx="580" cy="86" rx="115" ry="26" transform="rotate(10 580 86)"/>
+              <ellipse cx="495" cy="68" rx="95" ry="24" transform="rotate(6 495 68)"/>
+              <ellipse cx="380" cy="58" rx="110" ry="22"/>
+            </g>
+            <!-- Pine Needle Tufts -->
+            <g stroke="#2c6f43" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+              <path d="M90,94 L72,82 M105,89 L89,75 M128,83 L115,67 M155,77 L145,60 M188,71 L179,53 M225,65 L218,48 M265,61 L260,44"/>
+              <path d="M670,94 L688,82 M655,89 L671,75 M632,83 L645,67 M605,77 L615,60 M572,71 L581,53 M535,65 L542,48 M495,61 L500,44"/>
+            </g>
+            <!-- Snow Accents on Pine -->
+            <path d="M95,78 Q135,58 182,66 Q225,52 275,60 Q245,76 205,73 Q155,82 95,78 Z" fill="#f3f7fb" opacity="0.92"/>
+            <path d="M665,78 Q625,58 578,66 Q535,52 485,60 Q515,76 555,73 Q605,82 665,78 Z" fill="#f3f7fb" opacity="0.92"/>
+            <path d="M312,52 Q345,42 380,48 Q415,42 448,52 Q420,62 380,58 Q340,62 312,52 Z" fill="#f3f7fb" opacity="0.88"/>
+            <!-- Holly Berries & Baubles -->
+            <g>
+              <circle cx="152" cy="84" r="6" fill="#c9212a"/><circle cx="163" cy="88" r="5" fill="#9e121a"/>
+              <circle cx="242" cy="72" r="8" fill="#d9a036"/><circle cx="240" cy="69" r="2.5" fill="#fff4c4"/>
+              <circle cx="608" cy="84" r="6" fill="#c9212a"/><circle cx="597" cy="88" r="5" fill="#9e121a"/>
+              <circle cx="518" cy="72" r="8" fill="#d9a036"/><circle cx="516" cy="69" r="2.5" fill="#fff4c4"/>
+              <circle cx="305" cy="66" r="5.5" fill="#c9212a"/><circle cx="455" cy="66" r="5.5" fill="#c9212a"/>
+            </g>
+            <!-- Warm Fairy Bulbs in Crown -->
+            <g class="crown-fairy-lights">
+              <circle cx="118" cy="86" r="4.5" fill="#ffd97d"/>
+              <circle cx="195" cy="72" r="5" fill="#ffe79e"/>
+              <circle cx="275" cy="60" r="4.5" fill="#ffd97d"/>
+              <circle cx="485" cy="60" r="4.5" fill="#ffd97d"/>
+              <circle cx="565" cy="72" r="5" fill="#ffe79e"/>
+              <circle cx="642" cy="86" r="4.5" fill="#ffd97d"/>
+            </g>
+            <!-- Big Crimson Velvet Bow -->
+            <g transform="translate(380,46)">
+              <!-- Ribbons Hanging Down -->
+              <path d="M-8,8 L-34,54 L-18,45 L-8,58 Z" fill="#700b13"/>
+              <path d="M8,8 L34,54 L18,45 L8,58 Z" fill="#700b13"/>
+              <!-- Bow Loops -->
+              <path d="M-4,-2 C-42,-34 -68,-14 -60,8 C-53,26 -24,20 -4,6 Z" fill="url(#bowRed)" stroke="#e0565d" stroke-width="1"/>
+              <path d="M4,-2 C42,-34 68,-14 60,8 C53,26 24,20 4,6 Z" fill="url(#bowRed)" stroke="#e0565d" stroke-width="1"/>
+              <!-- Bow Inner Folds -->
+              <path d="M-12,2 C-34,-12 -46,-2 -40,8 C-34,14 -20,10 -12,4 Z" fill="#4f060c" opacity="0.55"/>
+              <path d="M12,2 C34,-12 46,-2 40,8 C34,14 20,10 12,4 Z" fill="#4f060c" opacity="0.55"/>
+              <!-- Knot -->
+              <rect x="-12" y="-10" width="24" height="22" rx="8" fill="url(#bowRed)" stroke="#e86e74" stroke-width="1"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="plaque-wood-body">
+          <!-- Floating glowing sparkles around title -->
+          <span class="title-sparkle s1" aria-hidden="true">✦</span>
+          <span class="title-sparkle s2" aria-hidden="true">❄</span>
+          <span class="title-sparkle s3" aria-hidden="true">✦</span>
+          <span class="title-heart-glow h1" aria-hidden="true">♡</span>
+          <span class="title-heart-glow h2" aria-hidden="true">♡</span>
+
+          <h1 class="main-title">
+            <span class="title-line">24 días para Navidad,</span>
+            <span class="title-line">24 sorpresas para ti <span class="glow-heart" aria-hidden="true">♡</span></span>
+          </h1>
+          <p class="arii-signature"><span class="sig-dash" aria-hidden="true">—</span> Arii <span aria-hidden="true">♡</span> <span class="sig-dash" aria-hidden="true">—</span></p>
+          <p class="dedication-strip">Un diciembre lleno de amor, porque tú haces especial esta Navidad ♡</p>
+        </div>
+      </div>
+
+      <!-- Hanging Parchment Countdown Sign (Top Right like reference) -->
+      <aside class="countdown-card" aria-label="Cuenta regresiva para Navidad">
+        <div class="countdown-rope" aria-hidden="true"></div>
+        <!-- Cute Santa Hat Perched on Corner -->
+        <svg class="countdown-santa-hat" viewBox="0 0 90 70" aria-hidden="true">
+          <path d="M14,44 Q32,4 62,16 Q76,22 76,42 Q50,48 14,44 Z" fill="#b81b24"/>
+          <path d="M58,14 Q79,22 80,44" fill="none" stroke="#850e15" stroke-width="5"/>
+          <circle cx="80" cy="46" r="8.5" fill="#f7f9fc"/>
+          <rect x="8" y="38" width="56" height="14" rx="7" transform="rotate(8 36 45)" fill="#f5f7fa"/>
+        </svg>
+        <div class="countdown-parchment">
+          <div class="countdown-header">
+            <svg class="calendar-mini-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M3,9 L21,9 M8,2 L8,6 M16,2 L16,6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <rect x="7" y="13" width="3" height="3" fill="currentColor"/>
+              <rect x="13" y="13" width="3" height="3" fill="currentColor"/>
+            </svg>
+            <span id="countdownLabel">Faltan:</span>
+          </div>
+          <div class="countdown-value" id="countdownDays">-- días</div>
+          <div class="countdown-sub" id="countdownSub">para Navidad ♡</div>
+          <div class="countdown-peru-time" id="peruDateDisplay" title="Hora oficial en Perú (America/Lima)"></div>
+        </div>
+      </aside>
+    </header>
+
+    <!-- Main 3-Column Storybook Stage: Left Forest | Center 24 Gifts | Right Cabin & Bear -->
+    <div class="scene-stage">
+      <!-- LEFT WING: Giant Decorated Christmas Tree, Signpost, Snowman, Lantern, Gifts -->
+      <section class="wing-left" aria-hidden="true">
+        <!-- Giant Left Christmas Tree -->
+        <div class="big-tree-left">
+          <svg viewBox="0 0 420 620" class="tree-svg">
+            <defs>
+              <radialGradient id="treeGlow" cx="50%" cy="45%" r="55%">
+                <stop offset="0%" stop-color="#ffd578" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#ffd578" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="pineLeft" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#1d5630"/>
+                <stop offset="55%" stop-color="#10361d"/>
+                <stop offset="100%" stop-color="#071d0f"/>
+              </linearGradient>
+            </defs>
+            <circle cx="155" cy="310" r="210" fill="url(#treeGlow)"/>
+            <!-- Tree Tiers -->
+            <path d="M135,35 L20,210 Q80,222 140,205 Q205,222 265,205 Z" fill="url(#pineLeft)"/>
+            <path d="M138,110 L-5,310 Q75,328 145,305 Q225,328 295,300 Z" fill="url(#pineLeft)"/>
+            <path d="M140,200 L-20,425 Q70,446 150,418 Q245,445 325,410 Z" fill="url(#pineLeft)"/>
+            <path d="M145,295 L-25,545 Q80,572 165,542 Q265,568 355,530 Z" fill="url(#pineLeft)"/>
+            <!-- Snow Dusting on Boughs -->
+            <path d="M135,35 L95,95 Q118,100 138,90 Q158,100 178,94 Z" fill="#eef5fc" opacity="0.82"/>
+            <path d="M22,208 Q55,194 88,207 Q62,217 22,208 Z" fill="#eef5fc" opacity="0.72"/>
+            <path d="M200,205 Q232,190 264,203 Q232,216 200,205 Z" fill="#eef5fc" opacity="0.78"/>
+            <path d="M225,304 Q262,286 293,298 Q262,315 225,304 Z" fill="#eef5fc" opacity="0.72"/>
+            <path d="M245,412 Q288,392 323,408 Q285,425 245,412 Z" fill="#eef5fc" opacity="0.68"/>
+            <!-- Garland Swags -->
+            <path d="M78,155 Q145,190 218,150" fill="none" stroke="#c89437" stroke-width="2.5" opacity="0.7"/>
+            <path d="M40,262 Q145,315 260,255" fill="none" stroke="#c89437" stroke-width="2.5" opacity="0.7"/>
+            <path d="M18,378 Q155,442 292,372" fill="none" stroke="#c89437" stroke-width="2.5" opacity="0.7"/>
+            <!-- Red Satin Bows -->
+            <g transform="translate(132,148)">
+              <path d="M-3,0 C-24,-18 -38,-6 -32,8 C-26,18 -10,12 -3,3 Z" fill="#a8141e"/>
+              <path d="M3,0 C24,-18 38,-6 32,8 C26,18 10,12 3,3 Z" fill="#a8141e"/>
+              <circle cx="0" cy="2" r="6" fill="#d12933"/>
+              <path d="M-4,5 L-14,28 L-4,22 Z M4,5 L14,28 L4,22 Z" fill="#7c0c13"/>
+            </g>
+            <g transform="translate(228,365) scale(0.85)">
+              <path d="M-3,0 C-24,-18 -38,-6 -32,8 C-26,18 -10,12 -3,3 Z" fill="#a8141e"/>
+              <path d="M3,0 C24,-18 38,-6 32,8 C26,18 10,12 3,3 Z" fill="#a8141e"/>
+              <circle cx="0" cy="2" r="6" fill="#d12933"/>
+            </g>
+            <!-- Signature Stitched Red Heart Ornament on Left Tree -->
+            <g transform="translate(136,240) rotate(-6)">
+              <line x1="0" y1="-34" x2="0" y2="-18" stroke="#e4c27a" stroke-width="2"/>
+              <path d="M0,26 C-28,6 -34,-18 -17,-26 C-7,-30 0,-21 0,-16 C0,-21 7,-30 17,-26 C34,-18 28,6 0,26 Z" fill="#b31823" stroke="#f2e6dc" stroke-width="2" stroke-dasharray="4 3"/>
+              <path d="M0,14 C-14,3 -18,-9 -9,-14 C-4,-16 0,-11 0,-8 C0,-11 4,-16 9,-14 C18,-9 14,3 0,14 Z" fill="none" stroke="#fff4ea" stroke-width="2"/>
+            </g>
+            <!-- Red & Gold Baubles -->
+            <g>
+              <circle cx="110" cy="112" r="10" fill="#c9222b"/><circle cx="107" cy="109" r="3" fill="#ff9ca1"/>
+              <circle cx="176" cy="122" r="9" fill="#dfac42"/><circle cx="173" cy="119" r="2.5" fill="#fff6cf"/>
+              <circle cx="80" cy="222" r="13" fill="#dfac42"/><circle cx="76" cy="217" r="4" fill="#fff6cf"/>
+              <circle cx="215" cy="212" r="14" fill="#bd1b24"/><circle cx="211" cy="207" r="4" fill="#ff9ca1"/>
+              <circle cx="66" cy="340" r="15" fill="#c9222b"/><circle cx="61" cy="335" r="4.5" fill="#ff9ca1"/>
+              <circle cx="172" cy="335" r="13" fill="#dfac42"/><circle cx="168" cy="330" r="4" fill="#fff6cf"/>
+              <circle cx="268" cy="332" r="11" fill="#bd1b24"/>
+              <circle cx="105" cy="450" r="14" fill="#dfac42"/><circle cx="101" cy="445" r="4" fill="#fff6cf"/>
+              <circle cx="242" cy="452" r="13" fill="#c9222b"/>
+            </g>
+            <!-- Twinkling Tree Lights -->
+            <g class="tree-twinkle-lights">
+              <circle class="tl t1" cx="135" cy="68" r="4.5" fill="#ffe48f"/>
+              <circle class="tl t2" cx="95" cy="150" r="5" fill="#ffcf63"/>
+              <circle class="tl t3" cx="192" cy="165" r="4.5" fill="#ffe9a6"/>
+              <circle class="tl t4" cx="55" cy="272" r="5.5" fill="#ffd978"/>
+              <circle class="tl t5" cx="185" cy="285" r="5" fill="#ffe48f"/>
+              <circle class="tl t6" cx="255" cy="260" r="4.5" fill="#ffcf63"/>
+              <circle class="tl t7" cx="38" cy="395" r="5.5" fill="#ffe9a6"/>
+              <circle class="tl t8" cx="148" cy="400" r="5" fill="#ffd978"/>
+              <circle class="tl t9" cx="275" cy="392" r="5" fill="#ffe48f"/>
+              <circle class="tl t10" cx="205" cy="495" r="5.5" fill="#ffd978"/>
+              <circle class="tl t11" cx="290" cy="495" r="5" fill="#ffe9a6"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Wooden Signpost: "Tú y yo ♡ / Siempre / Juntos ♡" -->
+        <div class="signpost-left">
+          <div class="signpost-pole"></div>
+          <div class="sign-plank p1">Tú y yo ♡</div>
+          <div class="sign-plank p2">Siempre</div>
+          <div class="sign-plank p3">Juntos ♡</div>
+        </div>
+
+        <!-- Cute Snowman + Glowing Heart Lantern -->
+        <div class="snowman-and-lantern">
+          <!-- Snowman SVG -->
+          <svg class="snowman-svg" viewBox="0 0 220 270">
+            <defs>
+              <radialGradient id="snowGrad" cx="38%" cy="32%" r="68%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="68%" stop-color="#e7eef6"/>
+                <stop offset="100%" stop-color="#b9cade"/>
+              </radialGradient>
+              <pattern id="plaidScarf" width="16" height="16" patternUnits="userSpaceOnUse">
+                <rect width="16" height="16" fill="#9f161f"/>
+                <rect x="0" y="5" width="16" height="3" fill="#18542f"/>
+                <rect x="5" y="0" width="3" height="16" fill="#18542f"/>
+                <rect x="11" y="0" width="1.5" height="16" fill="#e5b85c"/>
+                <rect x="0" y="11" width="16" height="1.5" fill="#e5b85c"/>
+              </pattern>
+            </defs>
+            <!-- Shadow -->
+            <ellipse cx="105" cy="252" rx="72" ry="14" fill="#0d1c28" opacity="0.35"/>
+            <!-- Twig Arms -->
+            <path d="M46,162 L14,132 M26,144 L15,124 M22,140 L8,144" stroke="#5c3821" stroke-width="5" stroke-linecap="round"/>
+            <path d="M164,162 L198,130 M184,144 L196,123 M188,140 L204,142" stroke="#5c3821" stroke-width="5" stroke-linecap="round"/>
+            <!-- Body & Head -->
+            <ellipse cx="105" cy="196" rx="64" ry="56" fill="url(#snowGrad)"/>
+            <circle cx="105" cy="108" r="44" fill="url(#snowGrad)"/>
+            <!-- Rosy Cheeks -->
+            <ellipse cx="78" cy="116" rx="9" ry="5.5" fill="#f3989e" opacity="0.65"/>
+            <ellipse cx="132" cy="116" rx="9" ry="5.5" fill="#f3989e" opacity="0.65"/>
+            <!-- Eyes & Smile -->
+            <circle cx="91" cy="100" r="4" fill="#1e1b1c"/>
+            <circle cx="90" cy="98.5" r="1.3" fill="#ffffff"/>
+            <circle cx="119" cy="100" r="4" fill="#1e1b1c"/>
+            <circle cx="118" cy="98.5" r="1.3" fill="#ffffff"/>
+            <path d="M88,122 Q105,134 123,121" fill="none" stroke="#2a2220" stroke-width="3" stroke-linecap="round"/>
+            <!-- Carrot Nose -->
+            <polygon points="105,107 132,113 105,118" fill="#e86f24"/>
+            <!-- Plaid Scarf -->
+            <path d="M68,136 Q105,155 142,136 Q146,154 105,163 Q64,154 68,136 Z" fill="url(#plaidScarf)" stroke="#5c0a10" stroke-width="1"/>
+            <path d="M114,149 L136,198 L113,204 L98,154 Z" fill="url(#plaidScarf)" stroke="#5c0a10" stroke-width="1"/>
+            <!-- Scarf Fringe -->
+            <path d="M114,204 L112,213 M120,203 L119,213 M126,201 L126,211 M133,199 L134,209" stroke="#d8b56c" stroke-width="2" stroke-linecap="round"/>
+            <!-- Three Wooden Heart Buttons -->
+            <g fill="#6d3a20" stroke="#3d1e0f" stroke-width="1">
+              <path d="M105,179 C99,173 95,167 99,163 C102,160 105,163 105,165 C105,163 108,160 111,163 C115,167 111,173 105,179 Z"/>
+              <path d="M105,200 C99,194 95,188 99,184 C102,181 105,184 105,186 C105,184 108,181 111,184 C115,188 111,194 105,200 Z"/>
+              <path d="M105,221 C99,215 95,209 99,205 C102,202 105,205 105,207 C105,205 108,202 111,205 C115,209 111,215 105,221 Z"/>
+            </g>
+            <!-- Red Knitted Beanie -->
+            <path d="M65,78 Q72,32 105,32 Q138,32 145,78 Z" fill="#a81721"/>
+            <path d="M77,74 Q82,38 105,35 Q128,38 133,74" fill="none" stroke="#850e16" stroke-width="2"/>
+            <rect x="59" y="70" width="92" height="16" rx="8" fill="#bf212b" stroke="#850e16" stroke-width="1.5"/>
+            <circle cx="105" cy="27" r="12" fill="#f7f9fc"/>
+          </svg>
+
+          <!-- Vintage Glowing Heart Lantern -->
+          <div class="lantern-wrap">
+            <div class="lantern-aura"></div>
+            <svg class="lantern-svg" viewBox="0 0 90 125">
+              <path d="M32,20 Q45,4 58,20" fill="none" stroke="#2a2420" stroke-width="3.5"/>
+              <polygon points="24,32 66,32 54,18 36,18" fill="#2c2521"/>
+              <rect x="20" y="32" width="50" height="8" rx="3" fill="#3a302b"/>
+              <!-- Warm Glass Window -->
+              <rect x="24" y="40" width="42" height="62" rx="3" fill="#ffbe55" opacity="0.92"/>
+              <rect x="27" y="43" width="36" height="56" rx="2" fill="#ffe699"/>
+              <!-- Glowing Heart Inside Lantern -->
+              <path d="M45,86 C31,74 28,60 36,55 C41,52 45,57 45,60 C45,57 49,52 54,55 C62,60 59,74 45,86 Z" fill="#fff9e2" stroke="#ff9d2e" stroke-width="2"/>
+              <!-- Frame Bars -->
+              <line x1="24" y1="40" x2="24" y2="102" stroke="#2a231f" stroke-width="4"/>
+              <line x1="66" y1="40" x2="66" y2="102" stroke="#2a231f" stroke-width="4"/>
+              <line x1="45" y1="40" x2="45" y2="102" stroke="#2a231f" stroke-width="2" opacity="0.5"/>
+              <rect x="18" y="102" width="54" height="12" rx="3" fill="#2b2420"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- CENTER: THE INTERACTIVE ADVENT CALENDAR (24 GIFTS + BONUS 25) -->
+      <section class="calendar-center" aria-label="Calendario de Adviento de 24 días">
+        <div class="calendar-board" id="calendarBoard">
+          <!-- Warm Fairy Lights Frame & Floating Hearts -->
+          <div class="board-lights" id="boardLights" aria-hidden="true"></div>
+          <div class="board-floating-hearts" aria-hidden="true">
+            <span class="bh b1">♡</span>
+            <span class="bh b2">✦</span>
+            <span class="bh b3">♡</span>
+            <span class="bh b4">❄</span>
+            <span class="bh b5">♡</span>
+          </div>
+
+          <!-- Progress Pill Subtle -->
+          <div class="progress-ribbon" id="progressRibbon">
+            <span id="progressText">0 de 24 sorpresas descubiertas ♡</span>
+          </div>
+
+          <!-- 24 Gift Tiles Container (Populated by app.js for rich SVG detail & real date checks) -->
+          <div class="gifts-grid" id="giftsGrid" role="list"></div>
+        </div>
+
+        <!-- Day 25 Bonus Navideño (Special Extra Gift below the 24 board) -->
+        <div class="bonus-25-wrap" id="bonus25Wrap">
+          <!-- Populated & managed by app.js -->
+        </div>
+      </section>
+
+      <!-- RIGHT WING: Cozy Cabin, Wreath, Right Pine Tree, Plush Teddy Bear, "Gracias por existir / Te amo" Sign -->
+      <section class="wing-right" aria-hidden="true">
+        <!-- Cozy Wooden Cabin Corner & Glowing Window + Wreath + Right Pine Tree -->
+        <div class="cabin-and-tree">
+          <svg class="cabin-svg" viewBox="0 0 320 430">
+            <defs>
+              <linearGradient id="cabinWall" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#3e2517"/>
+                <stop offset="100%" stop-color="#27160d"/>
+              </linearGradient>
+              <radialGradient id="windowWarm" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#fff0b8"/>
+                <stop offset="65%" stop-color="#f3a942"/>
+                <stop offset="100%" stop-color="#a85519"/>
+              </radialGradient>
+            </defs>
+            <!-- Pine Tree behind Cabin -->
+            <g transform="translate(15,155)">
+              <polygon points="85,0 15,165 155,165" fill="#0d2f1b"/>
+              <polygon points="85,55 0,225 170,225" fill="#0a2414"/>
+              <path d="M55,70 Q85,58 115,70" fill="none" stroke="#dce8f5" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
+              <circle cx="60" cy="110" r="4" fill="#ffe18c"/><circle cx="108" cy="135" r="4.5" fill="#ffd269"/>
+              <circle cx="42" cy="175" r="4.5" fill="#ffe9a6"/><circle cx="118" cy="190" r="4" fill="#ffd269"/>
+              <circle cx="78" cy="152" r="7" fill="#be1f28"/>
+            </g>
+            <!-- Cabin Structure -->
+            <rect x="135" y="135" width="185" height="275" fill="url(#cabinWall)"/>
+            <!-- Wood Plank Lines -->
+            <g stroke="#24130a" stroke-width="2" opacity="0.65">
+              <line x1="135" y1="165" x2="320" y2="165"/><line x1="135" y1="195" x2="320" y2="195"/>
+              <line x1="135" y1="225" x2="320" y2="225"/><line x1="135" y1="255" x2="320" y2="255"/>
+              <line x1="135" y1="285" x2="320" y2="285"/><line x1="135" y1="315" x2="320" y2="315"/>
+              <line x1="135" y1="345" x2="320" y2="345"/><line x1="135" y1="375" x2="320" y2="375"/>
+            </g>
+            <!-- Upper Glowing Window -->
+            <rect x="218" y="5" width="90" height="82" rx="4" fill="url(#windowWarm)" stroke="#4c2d1b" stroke-width="6"/>
+            <line x1="263" y1="5" x2="263" y2="87" stroke="#4c2d1b" stroke-width="4"/>
+            <line x1="218" y1="46" x2="308" y2="46" stroke="#4c2d1b" stroke-width="4"/>
+            <!-- Sloped Snowy Roof Overhang -->
+            <polygon points="105,120 325,180 325,212 95,148" fill="#4f301e"/>
+            <path d="M98,118 L325,178 L325,196 Q255,180 205,165 Q148,148 95,134 Z" fill="#eef4fa"/>
+            <!-- Porch Lights Along Eaves -->
+            <circle cx="145" cy="170" r="6" fill="#ffdf84"/><circle cx="195" cy="184" r="6" fill="#ffe79e"/>
+            <circle cx="245" cy="198" r="6" fill="#ffdf84"/><circle cx="295" cy="212" r="6" fill="#ffe79e"/>
+            <!-- Cabin Lower Window -->
+            <rect x="155" y="218" width="58" height="92" rx="4" fill="url(#windowWarm)" stroke="#3e2415" stroke-width="5"/>
+            <line x1="184" y1="218" x2="184" y2="310" stroke="#3e2415" stroke-width="3.5"/>
+            <line x1="155" y1="264" x2="213" y2="264" stroke="#3e2415" stroke-width="3.5"/>
+            <!-- Christmas Wreath on Cabin Wall -->
+            <g transform="translate(262,272)">
+              <circle cx="0" cy="0" r="34" fill="none" stroke="#184b2a" stroke-width="18"/>
+              <circle cx="0" cy="0" r="34" fill="none" stroke="#25673c" stroke-width="8" stroke-dasharray="6 4"/>
+              <circle cx="-26" cy="-14" r="4" fill="#c71d27"/><circle cx="25" cy="-16" r="4" fill="#c71d27"/>
+              <circle cx="-18" cy="24" r="4" fill="#e5b84b"/><circle cx="22" cy="22" r="4" fill="#c71d27"/>
+              <path d="M-2,-28 C-16,-40 -26,-32 -22,-22 C-18,-14 -6,-18 -2,-24 Z" fill="#b31823"/>
+              <path d="M2,-28 C16,-40 26,-32 22,-22 C18,-14 6,-18 2,-24 Z" fill="#b31823"/>
+              <circle cx="0" cy="-26" r="5" fill="#d12933"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Cute Plush Teddy Bear + Heart + "Gracias por existir ♡ / Te amo ♥" Sign -->
+        <div class="teddy-and-sign">
+          <svg class="teddy-svg" viewBox="0 0 240 270">
+            <defs>
+              <radialGradient id="furGrad" cx="42%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#c9854c"/>
+                <stop offset="65%" stop-color="#9e5d2d"/>
+                <stop offset="100%" stop-color="#6e3a17"/>
+              </radialGradient>
+              <radialGradient id="snoutGrad" cx="50%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#f0c89c"/>
+                <stop offset="100%" stop-color="#cfa06e"/>
+              </radialGradient>
+              <pattern id="bearScarf" width="14" height="14" patternUnits="userSpaceOnUse">
+                <rect width="14" height="14" fill="#9c141d"/>
+                <rect x="0" y="5" width="14" height="3" fill="#174f2c"/>
+                <rect x="5" y="0" width="3" height="14" fill="#174f2c"/>
+              </pattern>
+            </defs>
+            <!-- Shadow -->
+            <ellipse cx="122" cy="248" rx="76" ry="15" fill="#0d1c28" opacity="0.38"/>
+            <!-- Ears -->
+            <circle cx="68" cy="64" r="24" fill="url(#furGrad)"/>
+            <circle cx="68" cy="66" r="13" fill="#d9a675"/>
+            <circle cx="174" cy="66" r="24" fill="url(#furGrad)"/>
+            <circle cx="174" cy="68" r="13" fill="#d9a675"/>
+            <!-- Body & Feet -->
+            <ellipse cx="122" cy="192" rx="64" ry="56" fill="url(#furGrad)"/>
+            <ellipse cx="64" cy="230" rx="26" ry="20" transform="rotate(-18 64 230)" fill="url(#furGrad)"/>
+            <ellipse cx="62" cy="231" rx="16" ry="12" transform="rotate(-18 62 231)" fill="#d9a675"/>
+            <ellipse cx="180" cy="230" rx="26" ry="20" transform="rotate(18 180 230)" fill="url(#furGrad)"/>
+            <ellipse cx="182" cy="231" rx="16" ry="12" transform="rotate(18 182 231)" fill="#d9a675"/>
+            <!-- Head -->
+            <ellipse cx="122" cy="100" rx="54" ry="48" fill="url(#furGrad)"/>
+            <!-- Snout -->
+            <ellipse cx="122" cy="116" rx="24" ry="19" fill="url(#snoutGrad)"/>
+            <ellipse cx="122" cy="108" rx="9.5" ry="7" fill="#2c170f"/>
+            <path d="M122,115 L122,122 M113,121 Q122,129 131,121" fill="none" stroke="#2c170f" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Eyes & Blush -->
+            <circle cx="96" cy="95" r="5.5" fill="#181210"/><circle cx="94" cy="93" r="1.8" fill="#ffffff"/>
+            <circle cx="148" cy="95" r="5.5" fill="#181210"/><circle cx="146" cy="93" r="1.8" fill="#ffffff"/>
+            <ellipse cx="83" cy="110" rx="8" ry="5" fill="#e87a7a" opacity="0.5"/>
+            <ellipse cx="161" cy="110" rx="8" ry="5" fill="#e87a7a" opacity="0.5"/>
+            <!-- Santa Hat -->
+            <path d="M76,66 Q94,14 146,24 Q174,30 182,58 Q132,68 76,66 Z" fill="#b31922"/>
+            <circle cx="185" cy="60" r="10.5" fill="#f6f9fc"/>
+            <rect x="68" y="55" width="106" height="16" rx="8" transform="rotate(4 121 63)" fill="#f5f8fc"/>
+            <!-- Plaid Scarf -->
+            <path d="M78,136 Q122,155 166,136 Q170,152 122,162 Q74,152 78,136 Z" fill="url(#bearScarf)"/>
+            <!-- Arms Holding Big Plush Heart -->
+            <ellipse cx="70" cy="176" rx="22" ry="17" transform="rotate(28 70 176)" fill="url(#furGrad)"/>
+            <ellipse cx="174" cy="176" rx="22" ry="17" transform="rotate(-28 174 176)" fill="url(#furGrad)"/>
+            <!-- Big Crimson Plush Heart -->
+            <path d="M122,226 C72,190 66,144 96,132 C110,127 120,138 122,145 C124,138 134,127 148,132 C178,144 172,190 122,226 Z" fill="#a8131d" stroke="#cf2934" stroke-width="2"/>
+            <path d="M122,195 C101,179 98,159 111,154 C117,151 121,156 122,159 C123,156 127,151 133,154 C146,159 143,179 122,195 Z" fill="none" stroke="#ffecec" stroke-width="2.2"/>
+          </svg>
+
+          <!-- Wooden Sign: "Gracias por existir ♡ / Te amo ♥" -->
+          <div class="bear-wooden-sign">
+            <p class="bear-sign-line1">Gracias por existir ♡</p>
+            <p class="bear-sign-line2">Te amo ♥</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Foreground Snowy Clearing, Wooden Deck & Decorative Ground Gifts -->
+    <div class="foreground-ground" aria-hidden="true">
+      <div class="snow-bank-left"></div>
+      <div class="wood-deck-center"></div>
+      <div class="snow-bank-right"></div>
+      <!-- Decorative Wrapped Presents, Pine Sprigs & Holly at the Bottom Foreground -->
+      <svg class="ground-gifts-left" viewBox="0 0 260 95">
+        <ellipse cx="130" cy="84" rx="115" ry="12" fill="#081512" opacity="0.45"/>
+        <!-- Pine Sprigs & Holly -->
+        <path d="M12,78 Q45,55 82,76 Z" fill="#134525"/>
+        <path d="M175,78 Q210,54 248,78 Z" fill="#134525"/>
+        <circle cx="52" cy="72" r="4" fill="#c71f28"/><circle cx="60" cy="75" r="3.5" fill="#9c141c"/>
+        <!-- Gift 1: Green -->
+        <rect x="26" y="42" width="46" height="40" rx="4" fill="#17522c" stroke="#0d2e18" stroke-width="1.5"/>
+        <rect x="45" y="42" width="8" height="40" fill="#c71f28"/><rect x="26" y="57" width="46" height="7" fill="#c71f28"/>
+        <path d="M48,42 C36,30 28,36 35,42 Z M50,42 C62,30 70,36 63,42 Z" fill="#d92b35"/>
+        <!-- Gift 2: Red Large -->
+        <rect x="80" y="30" width="58" height="52" rx="4" fill="#a81922" stroke="#6b0d14" stroke-width="1.5"/>
+        <rect x="76" y="25" width="66" height="10" rx="3" fill="#bf212b"/>
+        <rect x="104" y="25" width="10" height="57" fill="#eab956"/>
+        <path d="M108,25 C92,10 82,18 92,25 Z M110,25 C126,10 136,18 126,25 Z" fill="#f0c869"/>
+        <!-- Gift 3: Kraft Small -->
+        <rect x="148" y="48" width="44" height="34" rx="4" fill="#d6b084" stroke="#8f6339" stroke-width="1.5"/>
+        <rect x="166" y="48" width="7" height="34" fill="#a81922"/>
+        <path d="M169,48 C159,38 153,43 159,48 Z M170,48 C180,38 186,43 180,48 Z" fill="#bf212b"/>
+      </svg>
+      <svg class="ground-gifts-right" viewBox="0 0 260 95">
+        <ellipse cx="130" cy="84" rx="115" ry="12" fill="#081512" opacity="0.45"/>
+        <path d="M12,78 Q45,55 82,76 Z" fill="#134525"/>
+        <path d="M175,78 Q210,54 248,78 Z" fill="#134525"/>
+        <circle cx="202" cy="71" r="4" fill="#c71f28"/><circle cx="210" cy="74" r="3.5" fill="#9c141c"/>
+        <!-- Gift 1: Red Small -->
+        <rect x="52" y="45" width="46" height="37" rx="4" fill="#a81922" stroke="#6b0d14" stroke-width="1.5"/>
+        <rect x="71" y="45" width="8" height="37" fill="#eab956"/>
+        <path d="M74,45 C62,33 56,39 63,45 Z M76,45 C88,33 94,39 87,45 Z" fill="#f0c869"/>
+        <!-- Gift 2: Green Large -->
+        <rect x="108" y="28" width="56" height="54" rx="4" fill="#164d29" stroke="#0c2c17" stroke-width="1.5"/>
+        <rect x="104" y="23" width="64" height="10" rx="3" fill="#1e6336"/>
+        <rect x="131" y="23" width="9" height="59" fill="#c71f28"/>
+        <path d="M135,23 C121,9 112,17 121,23 Z M137,23 C151,9 160,17 151,23 Z" fill="#d92b35"/>
+        <!-- Gift 3: Gold Accent -->
+        <rect x="174" y="46" width="44" height="36" rx="4" fill="#c78b30" stroke="#784f14" stroke-width="1.5"/>
+        <rect x="192" y="46" width="7" height="36" fill="#9e1620"/>
+      </svg>
+    </div>
+  </main>
+
+  <!-- DIALOG 1: Romantic Locked-Gift Patience Modal -->
+  <dialog id="lockedDialog" class="festive-dialog locked-dialog" closedby="any" aria-labelledby="lockedTitle">
+    <div class="dialog-wood-frame">
+      <button type="button" class="dialog-close-btn" data-close-dialog="lockedDialog" aria-label="Cerrar aviso">✕</button>
+      <div class="locked-emblem" aria-hidden="true">🔒✨</div>
+      <h1 id="lockedTitle" class="dialog-script-title">Un poquito de paciencia, mi amor...</h1>
+      <p id="lockedMessage" class="locked-copy">
+        Todavía no llega el momento de abrir este regalo ♡
+      </p>
+      <p id="lockedUnlockDate" class="locked-date-pill"></p>
+      <form method="dialog" class="dialog-actions">
+        <button type="submit" class="festive-btn primary-btn" autofocus>Volver al bosque ♡</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- DIALOG 2: Daily Surprise Modal (Days 1–24 + Day 25 Bonus) -->
+  <dialog id="surpriseDialog" class="festive-dialog surprise-dialog" closedby="any" aria-labelledby="surpriseTitle">
+    <div class="dialog-parchment-shell" id="surpriseShell">
+      <!-- Golden Particles Burst Layer -->
+      <div class="sparkle-burst" id="sparkleBurst" aria-hidden="true"></div>
+
+      <header class="surprise-header">
+        <div class="surprise-badge-row">
+          <span class="surprise-day-badge" id="surpriseDayBadge">Día 1</span>
+          <span class="surprise-type-pill" id="surpriseTypePill">Carta</span>
+        </div>
+        <button type="button" class="dialog-close-btn" data-close-dialog="surpriseDialog" aria-label="Cerrar sorpresa">✕</button>
+      </header>
+
+      <h1 id="surpriseTitle" class="surprise-main-title">Título de la sorpresa</h1>
+
+      <!-- Dynamic Surprise Presentation Area -->
+      <div class="surprise-body" id="surpriseBody"></div>
+
+      <footer class="surprise-footer">
+        <button type="button" class="festive-btn secondary-btn" data-close-dialog="surpriseDialog">
+          ← Regresar al calendario
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Load Editable Data & App Logic (classic scripts work smoothly on both HTTP and file://) -->
+  <script src="data/surprises.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
