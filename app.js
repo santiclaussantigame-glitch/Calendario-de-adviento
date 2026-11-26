@@ -639,13 +639,7 @@
 
     const edits = typeof window.getAdventEdits === 'function' ? window.getAdventEdits() : {};
     const customEdit = edits[dayNum];
-    const surprise = customEdit
-      ? Object.assign({}, baseSurprise, {
-          title: customEdit.title || baseSurprise.title,
-          _customMsg: customEdit.msg || '',
-          _customEmoji: customEdit.emoji || ''
-        })
-      : baseSurprise;
+    const surprise = customEdit ? Object.assign({}, baseSurprise, customEdit) : baseSurprise;
 
     if (!window.__ADMIN_UNLOCKED__) {
       const alreadyOpened = getOpenedDays().includes(dayNum);
@@ -693,26 +687,13 @@
     if (surprise.day === 24) shell.classList.add('is-grand-24');
     if (surprise.day === 25) shell.classList.add('is-bonus-25');
 
+    window.__CURRENT_OPEN_DAY__ = surprise.day;
     dayBadge.textContent = surprise.day === 25 ? '25 de Diciembre' : `Día ${surprise.day} de Diciembre`;
-    typePill.textContent = (surprise._customEmoji ? `${surprise._customEmoji} ` : '') + (surprise.typeLabel || 'Sorpresa');
+    typePill.textContent = surprise.typeLabel || 'Sorpresa';
     titleEl.textContent = surprise.title;
     bodyEl.innerHTML = '';
 
-    if (surprise._customMsg) {
-      const safeParagraphs = surprise._customMsg
-        .split(/\n+/)
-        .filter((line) => line.trim().length > 0)
-        .map((line) => `<p>${escapeHtml(line)}</p>`)
-        .join('');
-      bodyEl.innerHTML = `
-        <article class="parchment-letter">
-          ${surprise._customEmoji ? `<div style="font-size:2rem;text-align:center;margin-bottom:10px;">${escapeHtml(surprise._customEmoji)}</div>` : ''}
-          ${safeParagraphs}
-        </article>
-      `;
-    } else {
-      renderSurpriseContent(surprise, bodyEl);
-    }
+    renderSurpriseContent(surprise, bodyEl);
     triggerGoldenBurst(burstEl, surprise.day >= 24 ? 28 : 16);
 
     dialog.showModal();
@@ -1637,6 +1618,16 @@
      ------------------------------------------------------------------------ */
   function init() {
     window.refreshAdventGrid = renderCalendarGrid;
+    window.refreshOpenSurpriseModal = function (dayNum) {
+      const dialog = document.getElementById('surpriseDialog');
+      if (!dialog || !dialog.open || window.__CURRENT_OPEN_DAY__ !== dayNum) return;
+      const baseSurprise = window.ADVENT_SURPRISES && window.ADVENT_SURPRISES[dayNum];
+      if (!baseSurprise) return;
+      const edits = typeof window.getAdventEdits === 'function' ? window.getAdventEdits() : {};
+      const customEdit = edits[dayNum];
+      const surprise = customEdit ? Object.assign({}, baseSurprise, customEdit) : baseSurprise;
+      openSurpriseModal(surprise);
+    };
     populateBackdropLights();
     setupDialogBehaviors();
     updateCountdownUI();
