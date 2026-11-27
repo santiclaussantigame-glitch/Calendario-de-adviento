@@ -9,6 +9,9 @@
 
   const ADMIN_KEY = '180726';
   const STORAGE_EDIT = 'arii_advent_edits_v1';
+  const STORAGE_GH_TOKEN = 'arii_advent_gh_token_v1';
+  const GH_REPO = 'santiclaussantigame-glitch/Calendario-de-adviento';
+  const GH_FILE_PATH = 'data/surprises.js';
 
   const FIELD_LABELS = {
     typeLabel: 'Etiqueta del tipo',
@@ -166,30 +169,38 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 9998;
-      background: rgba(10, 30, 15, 0.92);
+      background: rgba(10, 30, 15, 0.94);
       border: 1.5px solid rgba(255, 210, 80, 0.55);
       border-radius: 14px;
-      padding: 10px 20px;
+      padding: 9px 16px;
       color: #ffd97d;
       font-family: 'Quicksand', sans-serif;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       display: flex;
       align-items: center;
-      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 94vw;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(4px);
     }
     #adminBar.hidden { display: none; }
-    #adminBarLock {
+    #adminBar button {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 210, 80, 0.4);
       border-radius: 8px;
       color: #ffd97d;
-      padding: 5px 12px;
+      padding: 5px 11px;
       cursor: pointer;
       font-family: inherit;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       font-weight: 700;
+    }
+    #adminBar #adminPublishBtn {
+      background: #d9a444;
+      color: #1a0a00;
+      border-color: #ffd97d;
     }
 
     .gift-tile { position: relative; }
@@ -296,9 +307,34 @@
   const adminBar = document.createElement('div');
   adminBar.id = 'adminBar';
   adminBar.className = 'hidden';
-  adminBar.innerHTML = `<span>✏️ Modo edición activo — abre cualquier regalo o pulsa ✏️ para editarlo</span>
+  adminBar.innerHTML = `<span>✏️ Modo edición activo</span>
+    <button type="button" id="adminPublishBtn" title="Subir tus cambios a GitHub para que se vean en todos los dispositivos">☁️ Publicar para todos</button>
+    <button type="button" id="adminDownloadBtn" title="Descargar archivo surprises.js">📥 Descargar</button>
     <button type="button" id="adminBarLock">🔒 Cerrar</button>`;
   document.body.appendChild(adminBar);
+
+  /* ---- Modal publicar en GitHub (<dialog>) ---- */
+  const ghDialog = document.createElement('dialog');
+  ghDialog.id = 'adminGhDialog';
+  ghDialog.className = 'admin-dialog';
+  ghDialog.innerHTML = `
+    <div class="admin-modal-box admin-pw-box" style="width:390px;text-align:left;">
+      <h2>☁️ Publicar para todos</h2>
+      <p class="admin-sub" style="margin-bottom:10px;">
+        Guarda tus cambios directo en GitHub para que Arii los vea en cualquier celular o PC.
+      </p>
+      <label class="edit-field-label" for="ghTokenInput">GitHub Token (se guarda solo en tu navegador)</label>
+      <input id="ghTokenInput" class="edit-field" type="password" placeholder="ghp_... o github_pat_..." autocomplete="off" style="margin-bottom:6px;" />
+      <p style="font-size:0.75rem;color:#b8af90;margin:0 0 10px;">
+        Necesita permiso de escritura en <b>Contents</b> del repo <code>Calendario-de-adviento</code>.
+      </p>
+      <div id="ghPublishStatus" style="font-size:0.82rem;min-height:18px;margin-bottom:10px;color:#ffd97d;"></div>
+      <div class="admin-btn-row" style="justify-content:flex-end;">
+        <button type="button" class="admin-btn admin-btn-cancel" id="ghCancelBtn">Cancelar</button>
+        <button type="button" class="admin-btn admin-btn-confirm" id="ghConfirmPublishBtn">Publicar ahora ✨</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ghDialog);
 
   /* ---- Modal edición (<dialog>) ---- */
   const editDialog = document.createElement('dialog');
@@ -587,6 +623,125 @@
     setTimeout(() => t.remove(), 2500);
   }
 
+  /* ---- Generar archivo surprises.js con todos los cambios ---- */
+  function getMergedSurprises() {
+    const baseAll = window.ADVENT_SURPRISES || {};
+    const edits = readEdits();
+    const merged = {};
+    Object.keys(baseAll).forEach((dayKey) => {
+      const base = baseAll[dayKey];
+      const ed = edits[dayKey];
+      merged[dayKey] = ed ? Object.assign({}, base, ed) : Object.assign({}, base);
+    });
+    return merged;
+  }
+
+  function buildSurprisesFileContent() {
+    const cfg = window.ADVENT_CONFIG || {
+      recipientName: 'Arii',
+      targetMonth: 12,
+      timeZone: 'America/Lima',
+      targetYear: 2026
+    };
+    const merged = getMergedSurprises();
+    return (
+      '/**\n' +
+      ' * SORPRESAS DEL CALENDARIO DE ADVIENTO PARA ARII (1 AL 24 + BONUS 25)\n' +
+      ' */\n\n' +
+      'window.ADVENT_CONFIG = ' + JSON.stringify(cfg, null, 2) + ';\n\n' +
+      'window.ADVENT_SURPRISES = ' + JSON.stringify(merged, null, 2) + ';\n'
+    );
+  }
+
+  function downloadSurprisesFile() {
+    const content = buildSurprisesFileContent();
+    const blob = new Blob([content], { type: 'application/javascript;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'surprises.js';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast('📥 surprises.js descargado');
+  }
+
+  function openPublishDialog() {
+    const inp = document.getElementById('ghTokenInput');
+    const statusEl = document.getElementById('ghPublishStatus');
+    let savedToken = '';
+    try { savedToken = localStorage.getItem(STORAGE_GH_TOKEN) || ''; } catch {}
+    inp.value = savedToken;
+    statusEl.textContent = '';
+    ghDialog.showModal();
+    setTimeout(() => inp.focus(), 60);
+  }
+
+  function closePublishDialog() {
+    if (ghDialog.open) ghDialog.close();
+  }
+
+  async function publishToGitHub() {
+    const inp = document.getElementById('ghTokenInput');
+    const statusEl = document.getElementById('ghPublishStatus');
+    const confirmBtn = document.getElementById('ghConfirmPublishBtn');
+    const token = inp.value.trim();
+
+    if (!token) {
+      statusEl.textContent = '❌ Pega tu GitHub Token primero.';
+      inp.focus();
+      return;
+    }
+
+    try { localStorage.setItem(STORAGE_GH_TOKEN, token); } catch {}
+
+    confirmBtn.disabled = true;
+    statusEl.textContent = '⏳ Publicando cambios en GitHub...';
+
+    try {
+      const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE_PATH}`;
+      const headers = {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${token}`
+      };
+
+      const getRes = await fetch(apiUrl, { headers });
+      if (!getRes.ok) {
+        const errData = await getRes.json().catch(() => ({}));
+        throw new Error(errData.message || `Error ${getRes.status} al leer el repositorio`);
+      }
+      const fileInfo = await getRes.json();
+
+      const newContent = buildSurprisesFileContent();
+      const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
+
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: Object.assign({}, headers, { 'Content-Type': 'application/json' }),
+        body: JSON.stringify({
+          message: 'chore: actualizar regalos personalizados desde el calendario',
+          content: encodedContent,
+          sha: fileInfo.sha
+        })
+      });
+
+      if (!putRes.ok) {
+        const errData = await putRes.json().catch(() => ({}));
+        throw new Error(errData.message || `Error ${putRes.status} al guardar en GitHub`);
+      }
+
+      window.ADVENT_SURPRISES = getMergedSurprises();
+      saveEdits({});
+      closePublishDialog();
+      showToast('✅ ¡Publicado! En ~1 min se verá en todos los dispositivos');
+    } catch (err) {
+      statusEl.textContent = `❌ ${err.message}`;
+    } finally {
+      confirmBtn.disabled = false;
+    }
+  }
+
   /* ---- Eventos ---- */
   lockBtn.addEventListener('click', () => {
     if (adminUnlocked) lockAdminMode();
@@ -596,6 +751,10 @@
   document.getElementById('adminConfirmBtn').addEventListener('click', attemptUnlock);
   document.getElementById('adminCancelBtn').addEventListener('click', closePasswordModal);
   document.getElementById('adminBarLock').addEventListener('click', lockAdminMode);
+  document.getElementById('adminPublishBtn').addEventListener('click', openPublishDialog);
+  document.getElementById('adminDownloadBtn').addEventListener('click', downloadSurprisesFile);
+  document.getElementById('ghConfirmPublishBtn').addEventListener('click', publishToGitHub);
+  document.getElementById('ghCancelBtn').addEventListener('click', closePublishDialog);
   document.getElementById('editSaveBtn').addEventListener('click', saveEdit);
   document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
   document.getElementById('editResetBtn').addEventListener('click', resetCurrentEdit);
@@ -609,6 +768,9 @@
   });
   editDialog.addEventListener('click', (e) => {
     if (e.target === editDialog) closeEditModal();
+  });
+  ghDialog.addEventListener('click', (e) => {
+    if (e.target === ghDialog) closePublishDialog();
   });
 
   window.getAdventEdits = readEdits;
