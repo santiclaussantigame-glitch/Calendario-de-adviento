@@ -693,7 +693,45 @@
     titleEl.textContent = surprise.title;
     bodyEl.innerHTML = '';
 
+    // Render contenido principal
     renderSurpriseContent(surprise, bodyEl);
+
+    // Crear contenedor secundario (inicialmente oculto)
+    const secondaryDiv = document.createElement('div');
+    secondaryDiv.className = 'secondary-content';
+    secondaryDiv.hidden = true;
+    secondaryDiv.innerHTML = surprise.secondaryHtml || '';
+    bodyEl.appendChild(secondaryDiv);
+
+    // Botón de flecha para alternar visibilidad
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'secondary-toggle';
+    toggleBtn.textContent = '→';
+    toggleBtn.addEventListener('click', () => {
+      const hidden = secondaryDiv.hidden;
+      secondaryDiv.hidden = !hidden;
+      toggleBtn.textContent = hidden ? '←' : '→';
+    });
+    // Insertar botón justo después del título (puede ajustarse según layout)
+    titleEl.parentNode.insertBefore(toggleBtn, titleEl.nextSibling);
+
+    // Gestos táctiles: deslizar hacia la izquierda abre, deslizar a la derecha cierra
+    let touchStartX = 0;
+    bodyEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
+    });
+    bodyEl.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const delta = touchEndX - touchStartX;
+      if (delta < -50 && secondaryDiv.hidden) { // swipe left
+        secondaryDiv.hidden = false;
+        toggleBtn.textContent = '←';
+      } else if (delta > 50 && !secondaryDiv.hidden) { // swipe right
+        secondaryDiv.hidden = true;
+        toggleBtn.textContent = '→';
+      }
+    });
+
     triggerGoldenBurst(burstEl, surprise.day >= 24 ? 28 : 16);
 
     dialog.showModal();
