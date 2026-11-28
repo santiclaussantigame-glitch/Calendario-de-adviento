@@ -696,41 +696,49 @@
     // Render contenido principal
     renderSurpriseContent(surprise, bodyEl);
 
-    // Crear contenedor secundario (inicialmente oculto)
-    const secondaryDiv = document.createElement('div');
-    secondaryDiv.className = 'secondary-content';
-    secondaryDiv.hidden = true;
-    secondaryDiv.innerHTML = surprise.secondaryHtml || '';
-    bodyEl.appendChild(secondaryDiv);
+    // Solo mostrar toggle si hay contenido secundario real
+    if (surprise.secondaryHtml) {
+      // Contenedor secundario (inicialmente oculto)
+      const secondaryDiv = document.createElement('div');
+      secondaryDiv.className = 'secondary-content';
+      secondaryDiv.hidden = true;
+      secondaryDiv.innerHTML = surprise.secondaryHtml;
 
-    // Botón de flecha para alternar visibilidad
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'secondary-toggle';
-    toggleBtn.textContent = '→';
-    toggleBtn.addEventListener('click', () => {
-      const hidden = secondaryDiv.hidden;
-      secondaryDiv.hidden = !hidden;
-      toggleBtn.textContent = hidden ? '←' : '→';
-    });
-    // Insertar botón justo después del título (puede ajustarse según layout)
-    titleEl.parentNode.insertBefore(toggleBtn, titleEl.nextSibling);
+      // Botón de flecha — va DENTRO de bodyEl, al final del contenido primario
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'secondary-toggle';
+      toggleBtn.setAttribute('aria-label', 'Ver contenido interactivo');
+      toggleBtn.textContent = '→';
+      toggleBtn.addEventListener('click', () => {
+        const isHidden = secondaryDiv.hidden;
+        secondaryDiv.hidden = !isHidden;
+        toggleBtn.textContent = isHidden ? '←' : '→';
+        toggleBtn.setAttribute('aria-label', isHidden ? 'Volver a la carta' : 'Ver contenido interactivo');
+      });
 
-    // Gestos táctiles: deslizar hacia la izquierda abre, deslizar a la derecha cierra
-    let touchStartX = 0;
-    bodyEl.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
-    });
-    bodyEl.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].clientX;
-      const delta = touchEndX - touchStartX;
-      if (delta < -50 && secondaryDiv.hidden) { // swipe left
-        secondaryDiv.hidden = false;
-        toggleBtn.textContent = '←';
-      } else if (delta > 50 && !secondaryDiv.hidden) { // swipe right
-        secondaryDiv.hidden = true;
-        toggleBtn.textContent = '→';
-      }
-    });
+      bodyEl.appendChild(toggleBtn);
+      bodyEl.appendChild(secondaryDiv);
+
+      // Gestos táctiles con AbortController para evitar acumulación de listeners
+      if (openSurpriseModal._touchAbort) openSurpriseModal._touchAbort.abort();
+      openSurpriseModal._touchAbort = new AbortController();
+      const { signal } = openSurpriseModal._touchAbort;
+
+      let touchStartX = 0;
+      bodyEl.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
+      }, { passive: true, signal });
+      bodyEl.addEventListener('touchend', (e) => {
+        const delta = e.changedTouches[0].clientX - touchStartX;
+        if (delta < -50 && secondaryDiv.hidden) {
+          secondaryDiv.hidden = false;
+          toggleBtn.textContent = '←';
+        } else if (delta > 50 && !secondaryDiv.hidden) {
+          secondaryDiv.hidden = true;
+          toggleBtn.textContent = '→';
+        }
+      }, { passive: true, signal });
+    }
 
     triggerGoldenBurst(burstEl, surprise.day >= 24 ? 28 : 16);
 

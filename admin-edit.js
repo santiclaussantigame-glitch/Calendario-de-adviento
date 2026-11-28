@@ -60,7 +60,7 @@
     'secretMessage', 'pactText', 'finalPromise', 'bonusMessage', 'validNote'
   ]);
 
-  const SKIP_KEYS = new Set(['day', 'type', 'melodyPreset', 'targetCount']);
+  const SKIP_KEYS = new Set(['day', 'type', 'melodyPreset', 'targetCount', 'secondaryHtml']);
 
   function readEdits() {
     try { return JSON.parse(localStorage.getItem(STORAGE_EDIT)) || {}; } catch { return {}; }
