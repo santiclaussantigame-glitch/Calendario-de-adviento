@@ -1841,6 +1841,27 @@ dialog.festive-dialog::backdrop {
 }
 
 /* Estado pausado por botón accesible del usuario */
+
+/* ---------- Secondary Content Toggle Styles ---------- */
+.secondary-toggle {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  color: var(--text-warm);
+}
+
+.secondary-content {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  color: var(--text-warm);
+}
+
+/* Estado pausado por botón accesible del usuario */
 body.motion-paused *,
 body.motion-paused *::before,
 body.motion-paused *::after {
