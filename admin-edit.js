@@ -308,7 +308,7 @@
   adminBar.id = 'adminBar';
   adminBar.className = 'hidden';
   adminBar.innerHTML = `<span>✏️ Modo edición activo</span>
-    <button type="button" id="adminPublishBtn" title="Subir tus cambios a GitHub para que se vean en todos los dispositivos">☁️ Publicar para todos</button>
+    <button type="button" id="adminPublishBtn" title="Subir tus cambios a GitHub para que se vean en todos los dispositivos">☁️ Guardar para todos</button>
     <button type="button" id="adminDownloadBtn" title="Descargar archivo surprises.js">📥 Descargar</button>
     <button type="button" id="adminBarLock">🔒 Cerrar</button>`;
   document.body.appendChild(adminBar);
@@ -318,20 +318,24 @@
   ghDialog.id = 'adminGhDialog';
   ghDialog.className = 'admin-dialog';
   ghDialog.innerHTML = `
-    <div class="admin-modal-box admin-pw-box" style="width:390px;text-align:left;">
-      <h2>☁️ Publicar para todos</h2>
-      <p class="admin-sub" style="margin-bottom:10px;">
-        Guarda tus cambios directo en GitHub para que Arii los vea en cualquier celular o PC.
+    <div class="admin-modal-box admin-pw-box" style="width:400px;text-align:left;">
+      <h2>☁️ Guardar para todos</h2>
+      <p class="admin-sub" style="margin-bottom:12px;">
+        Para que Arii vea tus cambios en cualquier celular, conecta tu GitHub <b>una sola vez</b>:
       </p>
-      <label class="edit-field-label" for="ghTokenInput">GitHub Token (se guarda solo en tu navegador)</label>
-      <input id="ghTokenInput" class="edit-field" type="password" placeholder="ghp_... o github_pat_..." autocomplete="off" style="margin-bottom:6px;" />
-      <p style="font-size:0.75rem;color:#b8af90;margin:0 0 10px;">
-        Necesita permiso de escritura en <b>Contents</b> del repo <code>Calendario-de-adviento</code>.
-      </p>
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,210,80,0.28);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:0.83rem;line-height:1.45;">
+        <b>Paso 1:</b> Pulsa este botón, baja hasta el botón verde <b>"Generate token"</b> y copia el código:<br/>
+        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Calendario%20Arii" target="_blank" rel="noopener noreferrer"
+           style="display:inline-block;margin-top:7px;background:#2ea043;color:#fff;text-decoration:none;padding:6px 12px;border-radius:8px;font-weight:700;">
+          🔑 Abrir GitHub y generar llave
+        </a>
+      </div>
+      <label class="edit-field-label" for="ghTokenInput">Paso 2: Pega aquí el código copiado (solo esta vez)</label>
+      <input id="ghTokenInput" class="edit-field" type="password" placeholder="ghp_..." autocomplete="off" style="margin-bottom:6px;" />
       <div id="ghPublishStatus" style="font-size:0.82rem;min-height:18px;margin-bottom:10px;color:#ffd97d;"></div>
       <div class="admin-btn-row" style="justify-content:flex-end;">
         <button type="button" class="admin-btn admin-btn-cancel" id="ghCancelBtn">Cancelar</button>
-        <button type="button" class="admin-btn admin-btn-confirm" id="ghConfirmPublishBtn">Publicar ahora ✨</button>
+        <button type="button" class="admin-btn admin-btn-confirm" id="ghConfirmPublishBtn">Guardar para todos ✨</button>
       </div>
     </div>`;
   document.body.appendChild(ghDialog);
@@ -674,6 +678,11 @@
     try { savedToken = localStorage.getItem(STORAGE_GH_TOKEN) || ''; } catch {}
     inp.value = savedToken;
     statusEl.textContent = '';
+    if (savedToken) {
+      showToast('⏳ Guardando para todos...');
+      publishToGitHub(true);
+      return;
+    }
     ghDialog.showModal();
     setTimeout(() => inp.focus(), 60);
   }
@@ -682,14 +691,15 @@
     if (ghDialog.open) ghDialog.close();
   }
 
-  async function publishToGitHub() {
+  async function publishToGitHub(isSilent) {
     const inp = document.getElementById('ghTokenInput');
     const statusEl = document.getElementById('ghPublishStatus');
     const confirmBtn = document.getElementById('ghConfirmPublishBtn');
     const token = inp.value.trim();
 
     if (!token) {
-      statusEl.textContent = '❌ Pega tu GitHub Token primero.';
+      statusEl.textContent = '❌ Pega tu código primero.';
+      if (!ghDialog.open) ghDialog.showModal();
       inp.focus();
       return;
     }
@@ -697,7 +707,7 @@
     try { localStorage.setItem(STORAGE_GH_TOKEN, token); } catch {}
 
     confirmBtn.disabled = true;
-    statusEl.textContent = '⏳ Publicando cambios en GitHub...';
+    statusEl.textContent = '⏳ Guardando en GitHub...';
 
     try {
       const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE_PATH}`;
@@ -734,9 +744,12 @@
       window.ADVENT_SURPRISES = getMergedSurprises();
       saveEdits({});
       closePublishDialog();
-      showToast('✅ ¡Publicado! En ~1 min se verá en todos los dispositivos');
+      showToast('✅ ¡Listo! En ~1 min se verá en todos los dispositivos');
     } catch (err) {
       statusEl.textContent = `❌ ${err.message}`;
+      if (isSilent && !ghDialog.open) {
+        ghDialog.showModal();
+      }
     } finally {
       confirmBtn.disabled = false;
     }
@@ -753,7 +766,7 @@
   document.getElementById('adminBarLock').addEventListener('click', lockAdminMode);
   document.getElementById('adminPublishBtn').addEventListener('click', openPublishDialog);
   document.getElementById('adminDownloadBtn').addEventListener('click', downloadSurprisesFile);
-  document.getElementById('ghConfirmPublishBtn').addEventListener('click', publishToGitHub);
+  document.getElementById('ghConfirmPublishBtn').addEventListener('click', () => publishToGitHub(false));
   document.getElementById('ghCancelBtn').addEventListener('click', closePublishDialog);
   document.getElementById('editSaveBtn').addEventListener('click', saveEdit);
   document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
